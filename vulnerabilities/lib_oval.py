@@ -125,14 +125,13 @@ class OvalDocument(object):
     NS_OVAL = {"oval": "http://oval.mitre.org/XMLSchema/oval-common-5"}
     NS_XSI = {"xsi": "http://www.w3.org/2001/XMLSchema-instance"}
 
-    #     xmlns:oval="http://oval.mitre.org/XMLSchema/oval-common-5"
-    #     xmlns:oval-def="http://oval.mitre.org/XMLSchema/oval-definitions-5"
+    #     xmlns:oval="http://oval.mitre.org/XMLSchema/oval-common-5"#     xmlns:oval-def="http://oval.mitre.org/XMLSchema/oval-definitions-5"
     #     xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
     #     xsi:schemaLocation="http://oval.mitre.org/XMLSchema/oval-definitions-5 oval-definitions-schema.xsd
     #     http://oval.mitre.org/XMLSchema/oval-definitions-5#independent independent-definitions-schema.xsd
     #     http://oval.mitre.org/XMLSchema/oval-definitions-5#solaris solaris-definitions-schema.xsd
     #     http://oval.mitre.org/XMLSchema/oval-common-5 oval-common-schema.xsd
-    #     http://oval.mitre.org/XMLSchema/oval-definitions-5#unix unix-definitions-schema.xsd">^M
+    #     http://oval.mitre.org/XMLSchema/oval-definitions-5#unix unix-definitions-schema.xsd">
 
     @staticmethod
     def indent(elem, level=0):
@@ -172,7 +171,7 @@ class OvalDocument(object):
         #         if not tree or not isinstance(tree, ElementTree):
         if not tree:
             root = Element("oval_definitions")
-            self.tree = ElementTree.ElementTree(root)
+            self.tree = defusedxml.ElementTree.ElementTree(root)
             element = Element("{" + OvalDocument.NS_DEFAULT.get("def") + "}generator")
             gen = OvalGenerator(element)
             gen.setProduct("The CIS OVAL Repository")
@@ -209,7 +208,7 @@ class OvalDocument(object):
                 self.tree = None
                 return False
             else:
-                self.tree = ElementTree.parse(filename)
+                self.tree = defusedxml.ElementTree.parse(filename)
                 return True
         except Exception:
             return False
@@ -226,8 +225,8 @@ class OvalDocument(object):
             if not xmltext:
                 return False
             else:
-                root = ElementTree.fromstring(xmltext)
-                self.tree = ElementTree(root)
+                root = defusedxml.ElementTree.fromstring(xmltext)
+                self.tree = defusedxml.ElementTree.ElementTree(root)
                 return True
         except Exception:
             return False
@@ -261,7 +260,7 @@ class OvalDocument(object):
         if root is None:
             return ""
         OvalDocument.indent(root)
-        return ElementTree.tostring(root, "UTF-8", "xml").decode("utf-8")
+        return defusedxml.ElementTree.tostring(root, "UTF-8", "xml").decode("utf-8")
 
     def getDocumentRoot(self):
         """
@@ -326,8 +325,7 @@ class OvalDocument(object):
         if defroot is None:
             return None
 
-        element_list = list(defroot)
-        if not element_list:
+        element_list = list(defroot)        if not element_list:
             return None
 
         return [OvalDefinition(element) for element in element_list]
