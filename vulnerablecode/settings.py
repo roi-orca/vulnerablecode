@@ -179,6 +179,8 @@ REST_FRAMEWORK_DEFAULT_THROTTLE_RATES = {
     "aliases": "5/minute",
     "cpes": "5/minute",
     "bulk_search_cpes": "5/hour",
+    "package_search": "20/minute",
+    "vulnerability_search": "20/minute",
 }
 
 if IS_TESTS:
@@ -191,6 +193,8 @@ if IS_TESTS:
         "aliases": "2/day",
         "cpes": "4/day",
         "bulk_search_cpes": "5/day",
+        "package_search": "20/day",
+        "vulnerability_search": "20/day",
     }
 
 
