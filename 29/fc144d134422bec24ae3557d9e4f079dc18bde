@@ -1,0 +1,19 @@
+docker-compose.yml
+  s_2b97ef82e5bd9d::t_0d77aca60b5696 39-42
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.7.5",
+  "base_commit_sha": "29fc144d134422bec24ae3557d9e4f079dc18bde",
+  "prompts": {},
+  "sessions": {
+    "s_2b97ef82e5bd9d": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "8dd6c4c2-3cfe-4e35-9a8a-066474af8249",
+        "model": "claude-opus-5-5"
+      },
+      "human_author": "Roi Lubetkin <roi@orca.security>"
+    }
+  }
+}
