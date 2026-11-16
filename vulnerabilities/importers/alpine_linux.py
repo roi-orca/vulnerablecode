@@ -27,6 +27,7 @@ from vulnerabilities.references import XsaReference
 from vulnerabilities.references import ZbxReference
 from vulnerabilities.utils import fetch_response
 from vulnerabilities.utils import is_cve
+from vulnerabilities.utils import is_safe_url
 
 LOGGER = logging.getLogger(__name__)
 BASE_URL = "https://secdb.alpinelinux.org/"
@@ -86,7 +87,9 @@ def fetch_advisory_links(
         return iter([])
     for anchor_tag in anchor_tags:
         if anchor_tag.text.endswith("json"):
-            yield urljoin(advisory_directory_link, anchor_tag.text)
+            resolved_link = urljoin(advisory_directory_link, anchor_tag.text)
+            if is_safe_url(base_url=advisory_directory_link, candidate_url=resolved_link):
+                yield resolved_link
 
 
 def check_for_attributes(record) -> bool:

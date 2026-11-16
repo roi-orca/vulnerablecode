@@ -27,6 +27,7 @@ from vulnerabilities.importer import Importer
 from vulnerabilities.importer import Reference
 from vulnerabilities.importer import VulnerabilitySeverity
 from vulnerabilities.severity_systems import APACHE_TOMCAT
+from vulnerabilities.utils import is_safe_url
 
 LOGGER = logging.getLogger(__name__)
 
@@ -139,7 +140,11 @@ class ApacheTomcatImporter(Importer):
             link = tag.get("href")
 
             if "security-" in link and any(char.isdigit() for char in link):
-                yield urllib.parse.urljoin(url, link)
+                resolved_link = urllib.parse.urljoin(url, link)
+                if is_safe_url(base_url=url, candidate_url=resolved_link):
+                    yield resolved_link
+                else:
+                    LOGGER.warning(f"Skipping untrusted advisory link {resolved_link!r}")
 
     def advisory_data(self):
         """

@@ -14,6 +14,7 @@ import json
 import logging
 import os
 import re
+import urllib.parse
 import urllib.request
 from collections import defaultdict
 from functools import total_ordering
@@ -422,6 +423,23 @@ def fetch_response(url):
     if response.status_code == 200:
         return response
     raise Exception(f"Failed to fetch data from {url!r} with status code: {response.status_code!r}")
+
+
+def is_safe_url(base_url, candidate_url):
+    """
+    Return True if ``candidate_url`` is safe to fetch as a follow-up request made while crawling
+    ``base_url``. A URL is considered safe only if it uses the http(s) scheme and points to the
+    same host as ``base_url``. This prevents SSRF when a scraped page contains an absolute URL
+    (e.g., in an anchor tag's href/text) that would otherwise override the trusted host when
+    resolved with ``urllib.parse.urljoin``.
+    """
+    base = urllib.parse.urlparse(base_url)
+    candidate = urllib.parse.urlparse(candidate_url)
+    return (
+        candidate.scheme in {"http", "https"}
+        and bool(candidate.hostname)
+        and candidate.hostname.lower() == (base.hostname or "").lower()
+    )
 
 
 # This should be a method on PackageURL
