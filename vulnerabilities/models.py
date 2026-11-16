@@ -10,6 +10,7 @@
 import hashlib
 import json
 import logging
+import re
 from contextlib import suppress
 
 from cwe2.database import Database
@@ -721,6 +722,10 @@ class AliasQuerySet(BaseQuerySet):
         return self.filter(alias__startswith="CVE")
 
 
+# A vulnerability identifier such as CVE-2020-2233, GHSA-xxxx-xxxx-xxxx or NPM-1234.
+ALIAS_IDENTIFIER = re.compile(r"[A-Za-z0-9][A-Za-z0-9._:-]*")
+
+
 class Alias(models.Model):
     """
     An alias is a unique vulnerability identifier in some database, such as
@@ -756,9 +761,13 @@ class Alias(models.Model):
     @property
     def url(self):
         """
-        Create a URL for the alias.
+        Create a URL for the alias, or None when the alias is not a plain
+        identifier: it comes verbatim from upstream feeds and ends up in an href.
         """
         alias: str = self.alias
+        if not ALIAS_IDENTIFIER.fullmatch(alias):
+            return None
+
         if alias.startswith("CVE"):
             return f"https://nvd.nist.gov/vuln/detail/{alias}"
 
