@@ -1,0 +1,33 @@
+vulnerabilities/models.py
+  s_f61ea27cb874d5::t_990482525e56f2 13,725-728,764-765,768-770
+vulnerabilities/templates/package_details.html
+  s_2b97ef82e5bd9d::t_77454505047823 69,116
+vulnerabilities/templates/vulnerabilities.html
+  s_2b97ef82e5bd9d::t_e1702df5c1ee0a 51
+vulnerabilities/templates/vulnerability_details.html
+  s_2b97ef82e5bd9d::t_31fb49d005954a 71
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.7.5",
+  "base_commit_sha": "3cc6ac2bec8691e662309b569dd9675f5cfbec78",
+  "prompts": {},
+  "sessions": {
+    "s_2b97ef82e5bd9d": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "8dd6c4c2-3cfe-4e35-9a8a-066474af8249",
+        "model": "claude-opus-5-5"
+      },
+      "human_author": "Roi Lubetkin <roi@orca.security>"
+    },
+    "s_f61ea27cb874d5": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "df20c9bc-e982-4557-ad6a-b134e387c5e0",
+        "model": "claude-opus-5-5"
+      },
+      "human_author": "Roi Lubetkin <roi@orca.security>"
+    }
+  }
+}
