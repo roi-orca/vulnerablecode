@@ -21,6 +21,7 @@ from vulnerabilities.importer import AffectedPackage
 from vulnerabilities.importer import Importer
 from vulnerabilities.importer import Reference
 from vulnerabilities.importer import VulnerabilitySeverity
+from vulnerabilities.utils import is_safe_url
 
 
 class PostgreSQLImporter(Importer):
@@ -135,7 +136,10 @@ def to_advisories(data):
 
 def find_advisory_urls(page_data):
     soup = BeautifulSoup(page_data, features="lxml")
-    return {
-        urlparse.urljoin("https://www.postgresql.org/", a_tag.attrs["href"])
-        for a_tag in soup.select("h3+ p a")
-    }
+    base_url = "https://www.postgresql.org/"
+    advisory_urls = set()
+    for a_tag in soup.select("h3+ p a"):
+        resolved_url = urlparse.urljoin(base_url, a_tag.attrs["href"])
+        if is_safe_url(base_url=base_url, candidate_url=resolved_url):
+            advisory_urls.add(resolved_url)
+    return advisory_urls

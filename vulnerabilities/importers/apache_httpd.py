@@ -37,6 +37,7 @@ from vulnerabilities.package_managers import VersionAPI
 from vulnerabilities.severity_systems import APACHE_HTTPD
 from vulnerabilities.utils import AffectedPackage as LegacyAffectedPackage
 from vulnerabilities.utils import get_affected_packages_by_patched_package
+from vulnerabilities.utils import is_safe_url
 from vulnerabilities.utils import nearest_patched_package
 from vulnerabilities.utils import resolve_version_range
 
@@ -161,7 +162,9 @@ def fetch_links(url):
         link = tag.get("href")
         if not link.endswith("json"):
             continue
-        links.append(urllib.parse.urljoin(url, link))
+        resolved_link = urllib.parse.urljoin(url, link)
+        if is_safe_url(base_url=url, candidate_url=resolved_link):
+            links.append(resolved_link)
     return links
 
 
