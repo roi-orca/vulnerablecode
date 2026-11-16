@@ -36,6 +36,10 @@ services:
       - static:/var/vulnerablecode/static/
     depends_on:
       - vulnerablecode
+    deploy:
+      resources:
+        limits:
+          memory: 256M
 
 
 volumes:
