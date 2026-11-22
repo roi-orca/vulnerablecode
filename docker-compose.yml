@@ -33,6 +33,7 @@ services:
       - docker.env
     volumes:
       - ./etc/nginx/conf.d/:/etc/nginx/conf.d/
+      - ./etc/nginx/certs/:/etc/nginx/certs/:ro
       - static:/var/vulnerablecode/static/
     depends_on:
       - vulnerablecode
