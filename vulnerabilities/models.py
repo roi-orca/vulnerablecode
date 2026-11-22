@@ -42,6 +42,8 @@ from vulnerabilities.utils import remove_qualifiers_and_subpath
 
 logger = logging.getLogger(__name__)
 
+MAX_SEARCH_QUERY_LENGTH = 200
+
 models.CharField.register_lookup(Length)
 models.CharField.register_lookup(Trim)
 
@@ -108,6 +110,9 @@ class VulnerabilityQuerySet(BaseQuerySet):
         query = query and query.strip()
         if not query:
             return qs.none()
+
+        # Bound the cost of substring scans on caller-supplied input.
+        query = query[:MAX_SEARCH_QUERY_LENGTH]
 
         # middle ground, exact on vulnerability_id
         qssearch = qs.filter(vulnerability_id=query)
