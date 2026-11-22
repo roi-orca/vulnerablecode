@@ -38,6 +38,17 @@ VULNERABLECODE_PASSWORD_MIN_LENGTH = env.int("VULNERABLECODE_PASSWORD_MIN_LENGTH
 
 CSRF_TRUSTED_ORIGINS = env.list("CSRF_TRUSTED_ORIGINS", default=[])
 
+# Transport security. Enable when served behind a TLS-terminating reverse proxy
+# that sets "X-Forwarded-Proto" (the reference nginx configuration does).
+VULNERABLECODE_REQUIRE_HTTPS = env.bool("VULNERABLECODE_REQUIRE_HTTPS", default=False)
+if VULNERABLECODE_REQUIRE_HTTPS:
+    SECURE_PROXY_SSL_HEADER = ("HTTP_X_FORWARDED_PROTO", "https")
+    SECURE_SSL_REDIRECT = True
+    SESSION_COOKIE_SECURE = True
+    CSRF_COOKIE_SECURE = True
+    SECURE_HSTS_SECONDS = env.int("SECURE_HSTS_SECONDS", default=31536000)
+    SECURE_HSTS_INCLUDE_SUBDOMAINS = True
+
 # SECURITY WARNING: do not run with debug turned on in production
 DEBUG = env.bool("VULNERABLECODE_DEBUG", default=False)
 
