@@ -24,12 +24,13 @@ from vulnerabilities.forms import ApiUserCreationForm
 from vulnerabilities.forms import PackageSearchForm
 from vulnerabilities.forms import VulnerabilitySearchForm
 from vulnerabilities.models import Weakness
+from vulnerabilities.throttling import SearchViewThrottleMixin
 from vulnerablecode.settings import env
 
 PAGE_SIZE = 20
 
 
-class PackageSearch(ListView):
+class PackageSearch(SearchViewThrottleMixin, ListView):
     model = models.Package
     template_name = "packages.html"
     ordering = ["type", "namespace", "name", "version"]
@@ -52,7 +53,7 @@ class PackageSearch(ListView):
         return self.model.objects.search(query).with_vulnerability_counts().prefetch_related()
 
 
-class VulnerabilitySearch(ListView):
+class VulnerabilitySearch(SearchViewThrottleMixin, ListView):
     model = models.Vulnerability
     template_name = "vulnerabilities.html"
     ordering = ["vulnerability_id"]
