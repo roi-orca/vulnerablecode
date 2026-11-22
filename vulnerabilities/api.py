@@ -299,8 +299,20 @@ class PackageViewSet(viewsets.ReadOnlyModelViewSet):
         """
         Return the Package URLs of all packages known to be vulnerable.
         """
-        vulnerable_packages = Package.objects.vulnerable().only("package_url").distinct()
-        vulnerable_purls = [str(package.package_url) for package in vulnerable_packages]
+        vulnerable_packages = (
+            Package.objects.vulnerable().only("package_url").distinct().order_by("package_url")
+        )
+
+        page = self.paginate_queryset(vulnerable_packages)
+        if page is not None:
+            vulnerable_purls = [str(package.package_url) for package in page]
+            return self.get_paginated_response(vulnerable_purls)
+
+        # Bounded fallback used only when no pagination class is configured
+        max_results = 1000
+        vulnerable_purls = [
+            str(package.package_url) for package in vulnerable_packages[:max_results]
+        ]
         return Response(vulnerable_purls)
 
 
