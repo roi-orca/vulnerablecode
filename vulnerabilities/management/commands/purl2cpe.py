@@ -58,6 +58,9 @@ class Purl2Cpe:
             for cve in p2c.cves:
                 try:
                     cve_year = cve.split("-")[1]
+                    # the year is used as a file name: only accept a 4-digit year
+                    if not (len(cve_year) == 4 and cve_year.isascii() and cve_year.isdigit()):
+                        raise ValueError(f"Invalid CVE year: {cve_year!r}")
                     by_years[cve_year].append(p2c)
                 except Exception as e:
                     raise Exception(cve) from e
