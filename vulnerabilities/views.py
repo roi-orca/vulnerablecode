@@ -175,6 +175,33 @@ class ApiUserCreateView(generic.CreateView):
     form_class = ApiUserCreationForm
     template_name = "api_user_creation_form.html"
 
+    # Throttle API key requests: max submissions per client IP per window.
+    throttle_max_requests = 5
+    throttle_window_seconds = 3600
+
+    def _is_throttled(self):
+        """
+        Return True if the client exceeded the allowed number of API key requests
+        in the current window. The counter is incremented on each call.
+        """
+        from django.core.cache import cache
+
+        ident = self.request.META.get("REMOTE_ADDR", "unknown")
+        key = f"api_user_create_throttle:{ident}"
+        cache.add(key, 0, self.throttle_window_seconds)
+        try:
+            count = cache.incr(key)
+        except ValueError:
+            cache.set(key, 1, self.throttle_window_seconds)
+            count = 1
+        return count > self.throttle_max_requests
+
+    def post(self, request, *args, **kwargs):
+        if self._is_throttled():
+            messages.error(request, "Too many API key requests. Please try again later.")
+            return redirect(self.get_success_url())
+        return super().post(request, *args, **kwargs)
+
     def form_valid(self, form):
 
         try:
