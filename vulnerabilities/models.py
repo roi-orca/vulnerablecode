@@ -878,11 +878,7 @@ class ApiUserManager(UserManager):
         """
         Validate username. If invalid, raise a ValidationError
         """
-        try:
-            self.get_by_natural_key(email)
-        except models.ObjectDoesNotExist:
-            pass
-        else:
+        if self.filter(Q(username__iexact=email) | Q(email__iexact=email)).exists():
             raise exceptions.ValidationError(f"Error: This email already exists: {email}")
 
 
